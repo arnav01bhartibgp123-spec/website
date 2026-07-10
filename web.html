@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login & Signup Demo</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    width:420px;
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+
+h1{
+    text-align:center;
+    color:#333;
+    margin-bottom:20px;
+}
+
+.buttons{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.buttons button{
+    flex:1;
+    margin:5px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:#0077ff;
+    color:white;
+    font-size:16px;
+    transition:.3s;
+}
+
+.buttons button:hover{
+    background:#0055cc;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+.action{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#00b894;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+.action:hover{
+    background:#00996f;
+}
+
+#message{
+    margin-top:15px;
+    text-align:center;
+    color:green;
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#0077ff;
+    color:white;
+}
+
+tr:nth-child(even){
+    background:#f2f2f2;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Demo Website</h1>
+
+<div class="buttons">
+<button onclick="showPage('signup')">Sign Up</button>
+<button onclick="showPage('login')">Login</button>
+<button onclick="showPage('see')">See Passwords</button>
+</div>
+
+<div id="signup" class="page active">
+
+<input id="suUser" placeholder="Username">
+<input id="suPass" type="password" placeholder="Password">
+
+<button class="action" onclick="signup()">Sign Up</button>
+
+</div>
+
+<div id="login" class="page">
+
+<input id="liUser" placeholder="Username">
+<input id="liPass" type="password" placeholder="Password">
+
+<button class="action" onclick="login()">Login</button>
+
+</div>
+
+<div id="see" class="page">
+
+<table>
+
+<thead>
+<tr>
+<th>Username</th>
+<th>Password</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+
+<div id="message"></div>
+
+</div>
+
+<script>
+
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+
+document.getElementById(id).classList.add("active");
+
+if(id=="see")
+loadTable();
+
+}
+
+function getUsers(){
+
+return JSON.parse(localStorage.getItem("users")) || [];
+
+}
+
+function saveUsers(users){
+
+localStorage.setItem("users",JSON.stringify(users));
+
+}
+
+function signup(){
+
+let u=document.getElementById("suUser").value.trim();
+
+let p=document.getElementById("suPass").value.trim();
+
+if(u==""||p==""){
+
+msg("Fill all fields.","red");
+return;
+
+}
+
+let users=getUsers();
+
+users.push({username:u,password:p});
+
+saveUsers(users);
+
+msg("Account Created!","green");
+
+document.getElementById("suUser").value="";
+document.getElementById("suPass").value="";
+
+}
+
+function login(){
+
+let u=document.getElementById("liUser").value.trim();
+
+let p=document.getElementById("liPass").value.trim();
+
+let users=getUsers();
+
+let found=users.find(x=>x.username==u && x.password==p);
+
+if(found){
+
+msg("Login Successful!","green");
+
+}else{
+
+msg("Wrong Username or Password.","red");
+
+}
+
+}
+
+function loadTable(){
+
+let users=getUsers();
+
+let html="";
+
+users.forEach(user=>{
+
+html+=`
+<tr>
+<td>${user.username}</td>
+<td>${user.password}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("tableBody").innerHTML=html;
+
+}
+
+function msg(text,color){
+
+let m=document.getElementById("message");
+
+m.innerHTML=text;
+
+m.style.color=color;
+
+}
+
+</script>
+
+</body>
+</html>
